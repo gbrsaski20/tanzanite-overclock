@@ -1,0 +1,17 @@
+# Firmware / vendor binaries — never commit these
+*.img
+*.bin
+*.cpio
+*.zip
+*.dtb
+extracted/
+stock-images/
+tools/
+
+# Python / local state
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.log
+.DS_Store
