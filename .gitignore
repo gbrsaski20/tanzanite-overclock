@@ -7,9 +7,6 @@
 extracted/
 stock-images/
 tools/
-camera/files/
-*.so
-*.apk
 
 # Python / local state
 __pycache__/
