@@ -82,6 +82,15 @@ python scripts/repack_vendor_boot.py \
     --module patched.ko --dtb dtb_patched.img --output vendor_boot_oc.img
 ```
 
+## Prebuilt image
+
+Image yang sudah divalidasi di perangkat tersedia di GitHub Releases:
+
+- [`vendor_boot_cpuoc_gpu12.img`](https://github.com/gbrsaski20/tanzanite-overclock/releases/download/v1.0.0/vendor_boot_cpuoc_gpu12.img) — A76 2.5 GHz, A55 2.4 GHz, GPU 1.2 GHz
+- SHA-256: `8c5aeedff6ae865e8126519ceb1e1e568f1a864ac0db9959a759f0896886b565`
+
+Binary ini berisi modul vendor dari ROM Halcyon. Pakai hanya jika kamu memang memiliki hak atas firmware tersebut.
+
 ## Flash
 
 Script di `flash/` sudah flash **dua slot sekaligus**.
