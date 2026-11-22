@@ -91,6 +91,52 @@ Image yang sudah divalidasi di perangkat tersedia di GitHub Releases:
 
 Binary ini berisi modul vendor dari ROM Halcyon. Pakai hanya jika kamu memang memiliki hak atas firmware tersebut.
 
+## MiuiCamera port (v1.4)
+
+MiuiCamera HyperOS dari LineageOS `flourite` (Qualcomm) bisa jalan di tanzanite, tapi butuh tiga penyesuaian:
+
+| Masalah | Solusi |
+|---|---|
+| `libmicampostproc_client.so` null deref di session MIA | 14 fungsi `MiPostProcSessionIntf` / `MiPostProcServiceIntf` di-stub jadi `return 0` |
+| JNI panggil `MIAProcessFrame` di engine vendor yang lebih tua | `processFrame` + `Jni_ProcessFrameWithSync_V10/V11` di-stub |
+| `camerahalserver` abort di `libanc_mfnr.so` (OpenCL) | `resetprop debug.anc.yuvsiq.emptysdk 1` dari `service.sh` |
+
+Hasilnya: **preview live**, foto tersimpan, tidak ada FC, modul bisa dipasang lewat Magisk maupun KernelSU.
+
+### Build dari donor
+
+Binary Xiaomi **tidak disertakan**. Ambil dari ROM yang kamu miliki, lalu letakkan di `camera/files/`:
+
+```
+MiuiCamera.apk
+libcamera_algoup_jni.xiaomi.so
+libcamera_mianode_jni.xiaomi.so
+libmicampostproc_client.so
+vendor.xiaomi.hardware.campostproc@1.0.so
+```
+
+```sh
+cd camera
+python build_module.py --files files --output ../miuicamera_tanzanite_v1.4_ksu_magisk.zip
+```
+
+Script `patch_postproc_client.py` dan `patch_algoup_jni.py` juga bisa dipakai sendiri:
+
+```sh
+python patch_postproc_client.py files/libmicampostproc_client.so patched_client.so
+python patch_algoup_jni.py files/libcamera_algoup_jni.xiaomi.so patched_jni.so
+```
+
+Alamat patch spesifik untuk build `flourite` 2026-11-14. Jangan pakai donor versi lain tanpa memverifikasi offset.
+
+### Pasang
+
+Flash `miuicamera_tanzanite_v1.4_ksu_magisk.zip` lewat aplikasi Magisk atau KernelSU, lalu reboot. Modul akan otomatis memberi runtime permission dan menetapkan properti MFNR.
+
+Prebuilt: [`miuicamera_tanzanite_v1.4_ksu_magisk.zip`](https://github.com/gbrsaski20/tanzanite-overclock/releases/download/v1.1.0-camera/miuicamera_tanzanite_v1.4_ksu_magisk.zip)
+
+Keterbatasan: efek MIA (beauty, HDR fusion) dan MFNR dimatikan; foto adalah keluaran langsung HAL. Di device dengan KernelSU + `meta-overlayfs`, jangan pasang modul ini dua kali (bisa dobel overlay).
+
 ## Flash
 
 Script di `flash/` sudah flash **dua slot sekaligus**.
